@@ -36,8 +36,7 @@ setup(
     ],
     ext_modules=[
         Extension('dcc_rpi_encoder_c',
-                  sources=['extensions/dcc_rpi_encoder_c.c'],
-                  libraries=['/usr/local/src/wiringPi'])
+                  sources=['extensions/dcc_rpi_encoder_c.c']
     ],
     classifiers=[
         "Programming Language :: Python",

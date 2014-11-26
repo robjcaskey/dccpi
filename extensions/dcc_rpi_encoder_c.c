@@ -21,7 +21,10 @@
 */
 
 #include <Python.h>
-#include <wiringPi.h>
+#define INPUT 0
+#define OUTPUT 1
+#define LOW 0
+#define HIGH 1
 //This one is not exposed
 extern void delayMicrosecondsHard (unsigned int howLong);
 
