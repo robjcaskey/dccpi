@@ -21,10 +21,10 @@
 */
 
 #include <Python.h>
-#define INPUT 0
-#define OUTPUT 1
-#define LOW 0
-#define HIGH 1
+#include <wiringPi.h>
+const int PIN_BREAK = 7;
+const int PIN_A = 8;
+const int PIN_B = 9;
 //This one is not exposed
 extern void delayMicrosecondsHard (unsigned int howLong);
 
@@ -48,24 +48,24 @@ static PyObject * dcc_rpi_encoder_c_send_bit_array(PyObject *self, PyObject *arg
         while (*bit_array_pos){ //string will be null terminated
             if (*bit_array_pos == '0'){
                 //Encode 0 with 100us for each part
-                digitalWrite(0, LOW);
+                digitalWrite(PIN_A, LOW);
                 delayMicrosecondsHard(bit_zero_part_duration);
-                digitalWrite(0, HIGH);
+                digitalWrite(PIN_A, HIGH);
                 delayMicrosecondsHard(bit_zero_part_duration);
             }
             else if (*bit_array_pos == '1'){
                 //Encode 1 with 58us for each part
-                digitalWrite(0, LOW);
+                digitalWrite(PIN_A, LOW);
                 delayMicrosecondsHard(bit_one_part_duration);
-                digitalWrite(0, HIGH);
+                digitalWrite(PIN_A, HIGH);
                 delayMicrosecondsHard(bit_one_part_duration);
             } else {
                 // Interpret this case as packet end char.
                 // Standard says we should wait 5ms at least
                 // and 30ms max between packets.
-                digitalWrite(0, LOW);
+                digitalWrite(PIN_A, LOW);
                 delay(packet_separation); //ms
-                digitalWrite(0, HIGH);
+                digitalWrite(PIN_A, HIGH);
             }
             bit_array_pos++;
         }
@@ -79,10 +79,10 @@ static PyObject * dcc_rpi_encoder_c_brake(PyObject *self, PyObject *args){
     if (!PyArg_ParseTuple(args, "I", &brake))
         return NULL;
 
-    if (brake == 0)
-        digitalWrite(2, LOW);
+    if (brake == 1)
+        digitalWrite(PIN_BREAK, LOW);
     else
-        digitalWrite(2, HIGH);
+        digitalWrite(PIN_BREAK, HIGH);
 
     Py_RETURN_NONE;
 }
@@ -98,7 +98,28 @@ static PyMethodDef DCCRPiEncoderMethods[] = {
 PyMODINIT_FUNC initdcc_rpi_encoder_c(void){
     wiringPiSetup();
     pinMode(0, OUTPUT);
-    pinMode(2, OUTPUT);
-    digitalWrite(2, HIGH); //Brake
+    pinMode(7, OUTPUT);
+    pinMode(9, OUTPUT);
+    digitalWrite(0, LOW);
+    digitalWrite(1, LOW);
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW); 
+    digitalWrite(5, LOW); 
+    digitalWrite(6, LOW);
+    digitalWrite(7, LOW); //green
+    digitalWrite(8, LOW); // yellow
+    digitalWrite(9, LOW); // blue
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW); 
+    digitalWrite(12, LOW); 
+    digitalWrite(13, LOW); 
+    digitalWrite(14, LOW); 
+    digitalWrite(15, LOW); 
+    digitalWrite(16, LOW); 
+    digitalWrite(17, LOW); 
+    digitalWrite(18, LOW); 
+    digitalWrite(19, LOW); 
+    digitalWrite(20, LOW); 
     Py_InitModule("dcc_rpi_encoder_c", DCCRPiEncoderMethods);
 }
