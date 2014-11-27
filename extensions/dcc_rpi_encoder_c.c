@@ -22,11 +22,25 @@
 
 #include <Python.h>
 #include <wiringPi.h>
-const int PIN_BREAK = 7;
-const int PIN_A = 8;
-const int PIN_B = 9;
+int PIN_BREAK = 3;
+int PIN_A = 1;
+int PIN_B = 2;
 //This one is not exposed
 extern void delayMicrosecondsHard (unsigned int howLong);
+
+static PyObject * dcc_rpi_encoder_c_set_pins(PyObject *self, PyObject *args){
+    if (!PyArg_ParseTuple(args, "iii", &PIN_A,
+                          &PIN_B,
+                          &PIN_BREAK))
+        return NULL;
+    pinMode(PIN_A, OUTPUT);
+    digitalWrite(PIN_A, LOW);
+    pinMode(PIN_B, OUTPUT);
+    digitalWrite(PIN_B, LOW);
+    pinMode(PIN_BREAK, OUTPUT);
+    digitalWrite(PIN_BREAK, LOW);
+    Py_RETURN_NONE;
+}
 
 static PyObject * dcc_rpi_encoder_c_send_bit_array(PyObject *self, PyObject *args){
     char const *bit_array;
@@ -90,6 +104,8 @@ static PyObject * dcc_rpi_encoder_c_brake(PyObject *self, PyObject *args){
 static PyMethodDef DCCRPiEncoderMethods[] = {
     {"send_bit_array", dcc_rpi_encoder_c_send_bit_array, METH_VARARGS,
      "Send some bits to the tracks"},
+    {"set_pins", dcc_rpi_encoder_c_set_pins, METH_VARARGS,
+     "Specify pins for bit banging"},
     {"brake", dcc_rpi_encoder_c_brake, METH_VARARGS,
      "Enable or disable a brake signal"},
     {NULL, NULL, 0, NULL} /* Sentinel - whatever that means */
@@ -97,9 +113,6 @@ static PyMethodDef DCCRPiEncoderMethods[] = {
 
 PyMODINIT_FUNC initdcc_rpi_encoder_c(void){
     wiringPiSetup();
-    pinMode(0, OUTPUT);
-    pinMode(7, OUTPUT);
-    pinMode(9, OUTPUT);
     digitalWrite(0, LOW);
     digitalWrite(1, LOW);
     digitalWrite(2, LOW);

@@ -38,7 +38,7 @@ class DCCRPiEncoder(DCCEncoder):
                  bit_zero_part_min_duration=95,
                  bit_zero_part_max_duration=9900,
                  bit_zero_part_duration=100,
-                 packet_separation=5):
+                 packet_separation=5,pin_a=1,pin_b=2,pin_break=3):
         """
         These arguments should be helpful in tweaking the outputs to better
         fit the hardware or specific decoder requirements. I.e. if your
@@ -50,7 +50,7 @@ class DCCRPiEncoder(DCCEncoder):
         Older decoders need a 5ms packet separation. Performance should improve
         by making it 0 if working with new decoders.
         """
-
+	self.set_pins(pin_a,pin_b,pin_break)
         DCCEncoder.__init__(self,
                             bit_one_part_min_duration,
                             bit_one_part_max_duration,
@@ -109,6 +109,8 @@ class DCCRPiEncoder(DCCEncoder):
                                                 self.bit_one_part_duration,
                                                 self.bit_zero_part_duration,
                                                 self.packet_separation)
+    def set_pins(self, pin_a, pin_b, pin_break):
+        return dcc_rpi_encoder_c.set_pins(pin_a, pin_b, pin_break)
 
     def tracks_power_on(self):
         return dcc_rpi_encoder_c.brake(0)
