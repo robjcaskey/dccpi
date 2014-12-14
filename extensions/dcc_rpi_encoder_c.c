@@ -132,7 +132,9 @@ PyMODINIT_FUNC initdcc_rpi_encoder_c(void){
     digitalWrite(16, LOW); 
     digitalWrite(17, LOW); 
     digitalWrite(18, LOW); 
+/*
     digitalWrite(19, LOW); 
     digitalWrite(20, LOW); 
+*/
     Py_InitModule("dcc_rpi_encoder_c", DCCRPiEncoderMethods);
 }
